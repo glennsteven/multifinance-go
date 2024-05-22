@@ -1,5 +1,5 @@
 CREATE TABLE transactions(
-    id INT PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     consumer_id INT not null ,
     contract_number varchar(40) not null,
     otr decimal(10,2) not null,

@@ -1,4 +1,4 @@
-package resource
+package resources
 
 type ResponseManagementTransaction struct {
 	Name           string           `json:"name"`

@@ -1,7 +1,7 @@
-package resource
+package resources
 
 type ConsumerResource struct {
-	Id             string  `json:"id"`
+	Id             int64   `json:"id"`
 	IdentityNumber string  `json:"identity_number"`
 	FullName       string  `json:"full_name"`
 	LegalName      string  `json:"legal_name"`
