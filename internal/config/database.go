@@ -21,10 +21,20 @@ func NewDatabase(viper *viper.Viper, log *logrus.Logger) *sql.DB {
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local", username, password, host, port, database)
 
+	log.WithFields(logrus.Fields{
+		"driver":       driver,
+		"host":         host,
+		"port":         port,
+		"database":     database,
+		"idleConns":    idleConnection,
+		"maxConns":     maxConnection,
+		"connLifeTime": maxLifeTimeConnection,
+	}).Info("Attempting to open database connection")
+
 	conn, err := sql.Open(driver, dsn)
 
 	if err != nil {
-		log.Printf("connection database got error: %v", err)
+		log.WithError(err).Error("Failed to connect to database")
 		return nil
 	}
 

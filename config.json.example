@@ -1,0 +1,29 @@
+{
+  "app": {
+    "name": "multifinance-go"
+  },
+  "web": {
+    "port": 3000
+  },
+  "log": {
+    "level": 6
+  },
+  "database": {
+    "driver": "",
+    "username": "",
+    "password": "",
+    "host": "",
+    "port": 3306,
+    "name": "multi_finance",
+    "pool": {
+      "idle": 10,
+      "max": 100,
+      "lifetime": 300
+    }
+  },
+  "cloudinary": {
+    "cloud_name" : "",
+    "api_key" : "",
+    "api_secret": ""
+  }
+}
