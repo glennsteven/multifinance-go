@@ -5,6 +5,7 @@
 - Validator : https://github.com/go-playground/validator
 - Golang Migrate (Database Migration) : https://github.com/golang-migrate/migrate
 - Logrus (Logger) : https://github.com/sirupsen/logrus
+- Cloudinary for upload file(image) : https://cloudinary.com/
 
 ## Database Migration
 All database migration is in `db/migrations` folder.

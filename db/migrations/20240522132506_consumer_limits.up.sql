@@ -1,5 +1,5 @@
 CREATE TABLE consumer_limits (
-    id INT PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     consumer_id int not null,
     tenor int not null ,
     limit_amount decimal(10,2) not null default 0,

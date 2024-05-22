@@ -1,5 +1,5 @@
 CREATE TABLE consumers (
-    id INT PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     full_name varchar(255) NOT NULL,
     nik varchar(16) NOT NULL,
     legal_name varchar(50) NOT NULL,

@@ -5,6 +5,9 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
 	"multifinance-go/internal/config"
+	"multifinance-go/internal/controllers/consumer_controller"
+	"multifinance-go/internal/repositories"
+	"multifinance-go/internal/services/consumer_service"
 	"net/http"
 )
 
@@ -29,5 +32,16 @@ func Run() {
 func Router(r *mux.Router) {
 	viperConfig := config.NewViper()
 	log := config.NewLogger(viperConfig)
-	_ = config.NewDatabase(viperConfig, log)
+	db := config.NewDatabase(viperConfig, log)
+
+	consumersRepository := repositories.NewConsumer(db)
+
+	consumerService := consumer_service.NewConsumerService(consumersRepository, viperConfig)
+	consumerController := consumer_controller.NewConsumerController(consumerService)
+
+	// Sub-Router
+	sub := r.PathPrefix("/api").Subrouter()
+	sub.HandleFunc("/consumers",
+		consumerController.CreateConsumer,
+	).Methods(http.MethodPost)
 }
