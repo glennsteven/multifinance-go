@@ -170,13 +170,3 @@ func (c *consumerRepository) FindId(ctx context.Context, consumerId int64) (*ent
 		return nil, nil
 	}
 }
-
-func (c *consumerRepository) Update(ctx context.Context, param entity.Consumers, where entity.Consumers) error {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c *consumerRepository) Find(ctx context.Context) ([]entity.Consumers, error) {
-	//TODO implement me
-	panic("implement me")
-}

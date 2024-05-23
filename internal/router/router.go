@@ -63,4 +63,8 @@ func Router(r *mux.Router) {
 	sub.HandleFunc("/transaction",
 		transactionController.AddTransaction,
 	).Methods(http.MethodPost)
+
+	sub.HandleFunc("/{transactionId}/transaction",
+		transactionController.ChangeStatusTransaction,
+	).Methods(http.MethodPut)
 }
