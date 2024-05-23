@@ -7,9 +7,11 @@ import (
 	"multifinance-go/internal/config"
 	"multifinance-go/internal/controllers/consumer_controller"
 	"multifinance-go/internal/controllers/limit_controller"
+	"multifinance-go/internal/controllers/transaction_controller"
 	"multifinance-go/internal/repositories"
 	"multifinance-go/internal/services/consumer_service"
-	"multifinance-go/internal/services/limit"
+	"multifinance-go/internal/services/limit_service"
+	"multifinance-go/internal/services/transaction_service"
 	"net/http"
 )
 
@@ -39,6 +41,7 @@ func Router(r *mux.Router) {
 	//Repositories
 	consumersRepository := repositories.NewConsumer(db)
 	LimitRepository := repositories.NewLimit(db)
+	transactionRepository := repositories.NewTransaction(db)
 
 	// Sub-Router
 	sub := r.PathPrefix("/api").Subrouter()
@@ -49,9 +52,15 @@ func Router(r *mux.Router) {
 		consumerController.CreateConsumer,
 	).Methods(http.MethodPost)
 
-	addLimitService := limit.NewAddLimitConsumerService(consumersRepository, LimitRepository)
+	addLimitService := limit_service.NewAddLimitConsumerService(consumersRepository, LimitRepository)
 	addLimitController := limit_controller.NewAddConsumerLimitController(addLimitService)
 	sub.HandleFunc("/limit",
 		addLimitController.AddConsumerLimit,
+	).Methods(http.MethodPost)
+
+	transactionService := transaction_service.NewAddTransactionService(transactionRepository, consumersRepository, LimitRepository)
+	transactionController := transaction_controller.NewAddTransactionController(transactionService)
+	sub.HandleFunc("/transaction",
+		transactionController.AddTransaction,
 	).Methods(http.MethodPost)
 }

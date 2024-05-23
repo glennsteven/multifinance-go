@@ -1,4 +1,4 @@
-package limit
+package limit_service
 
 import (
 	"context"

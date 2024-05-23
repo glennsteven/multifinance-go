@@ -5,17 +5,17 @@ import (
 	"github.com/sirupsen/logrus"
 	"multifinance-go/internal/presentations"
 	"multifinance-go/internal/resources"
-	"multifinance-go/internal/services/limit"
+	"multifinance-go/internal/services/limit_service"
 	"multifinance-go/internal/utils"
 	"net/http"
 )
 
 type addConsumerLimitController struct {
-	consumerLimitService limit.Resolve
+	consumerLimitService limit_service.Resolve
 }
 
 func NewAddConsumerLimitController(
-	consumerLimitService limit.Resolve,
+	consumerLimitService limit_service.Resolve,
 ) Resolver {
 	return &addConsumerLimitController{
 		consumerLimitService: consumerLimitService,
