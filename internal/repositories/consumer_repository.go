@@ -134,6 +134,43 @@ func (c *consumerRepository) FindIdentityNumber(ctx context.Context, identityNum
 	}
 }
 
+func (c *consumerRepository) FindId(ctx context.Context, consumerId int64) (*entity.Consumers, error) {
+	var (
+		result entity.Consumers
+		err    error
+	)
+
+	q := `SELECT 
+			id,
+			full_name,
+            nik,
+            legal_name,
+            pob,
+            dob,
+            salary,
+            image_identity,
+            image_selfie
+		FROM consumers WHERE id = ?`
+
+	rows, err := c.db.QueryContext(ctx, q, consumerId)
+	if err != nil {
+		log.Printf("got error when find products %v", err)
+		return nil, err
+	}
+
+	defer rows.Close()
+	if rows.Next() {
+		err = rows.Scan(&result.Id, &result.FullName, &result.NIK, &result.LegalName, &result.Pob, &result.Dob, &result.Salary, &result.ImageIdentity, &result.ImageSelfie)
+		if err != nil {
+			log.Printf("got error scan value %v", err)
+			return nil, err
+		}
+		return &result, nil
+	} else {
+		return nil, nil
+	}
+}
+
 func (c *consumerRepository) Update(ctx context.Context, param entity.Consumers, where entity.Consumers) error {
 	//TODO implement me
 	panic("implement me")

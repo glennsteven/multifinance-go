@@ -6,8 +6,10 @@ import (
 	"github.com/sirupsen/logrus"
 	"multifinance-go/internal/config"
 	"multifinance-go/internal/controllers/consumer_controller"
+	"multifinance-go/internal/controllers/limit_controller"
 	"multifinance-go/internal/repositories"
 	"multifinance-go/internal/services/consumer_service"
+	"multifinance-go/internal/services/limit"
 	"net/http"
 )
 
@@ -34,14 +36,22 @@ func Router(r *mux.Router) {
 	log := config.NewLogger(viperConfig)
 	db := config.NewDatabase(viperConfig, log)
 
+	//Repositories
 	consumersRepository := repositories.NewConsumer(db)
-
-	consumerService := consumer_service.NewConsumerService(consumersRepository, viperConfig)
-	consumerController := consumer_controller.NewConsumerController(consumerService)
+	LimitRepository := repositories.NewLimit(db)
 
 	// Sub-Router
 	sub := r.PathPrefix("/api").Subrouter()
+
+	consumerService := consumer_service.NewConsumerService(consumersRepository, viperConfig)
+	consumerController := consumer_controller.NewConsumerController(consumerService)
 	sub.HandleFunc("/consumers",
 		consumerController.CreateConsumer,
+	).Methods(http.MethodPost)
+
+	addLimitService := limit.NewAddLimitConsumerService(consumersRepository, LimitRepository)
+	addLimitController := limit_controller.NewAddConsumerLimitController(addLimitService)
+	sub.HandleFunc("/limit",
+		addLimitController.AddConsumerLimit,
 	).Methods(http.MethodPost)
 }
