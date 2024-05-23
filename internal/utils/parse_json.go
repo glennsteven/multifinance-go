@@ -3,8 +3,11 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/go-playground/validator/v10"
 	"net/http"
 )
+
+var Validate = validator.New()
 
 func ParseJSON(r *http.Request, v any) error {
 	if r.Body == nil {
@@ -19,8 +22,4 @@ func WriteJSON(w http.ResponseWriter, code int, payload interface{}) {
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(code)
 	w.Write(response)
-}
-
-func WriteError(w http.ResponseWriter, status int, err error) {
-	WriteJSON(w, status, map[string]string{"error": err.Error()})
 }

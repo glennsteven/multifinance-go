@@ -2,7 +2,6 @@ package consumer_controller
 
 import (
 	"github.com/sirupsen/logrus"
-	"log"
 	"multifinance-go/internal/presentations"
 	"multifinance-go/internal/resources"
 	"multifinance-go/internal/services/consumer_service"
@@ -29,7 +28,21 @@ func (c *consumerController) CreateConsumer(w http.ResponseWriter, r *http.Reque
 
 	params, err := parseForm(r)
 	if err != nil {
-		log.Printf("error when parse form: %v", err)
+		if ve, ok := err.(ValidationErrors); ok {
+			for field, msg := range ve {
+				logrus.Printf("Validation error - %s: %s", field, msg)
+			}
+			response.Code = http.StatusBadRequest
+			response.Message = ve.Error()
+
+			utils.WriteJSON(w, response.Code, response)
+		} else {
+			response.Code = http.StatusInternalServerError
+			response.Message = "Failed to parse form"
+
+			logrus.Printf("error when parse form: %v", err)
+			utils.WriteJSON(w, response.Code, response)
+		}
 		return
 	}
 
@@ -51,8 +64,6 @@ func (c *consumerController) CreateConsumer(w http.ResponseWriter, r *http.Reque
 		utils.WriteJSON(w, http.StatusInternalServerError, response)
 		return
 	}
-
-	defer r.Body.Close()
 
 	logrus.Infof("Consumer created successfully: %v", result)
 
