@@ -4,6 +4,7 @@ CREATE TABLE transactions(
     contract_number varchar(40) not null,
     otr decimal(10,2) not null,
     fee_admin decimal(10, 2) not null ,
+    status INT DEFAULT 0 COMMENT '0: Pending, 1: Accepted 3:Rejected',
     installment_amount int not null,
     total_interest decimal(10, 2) not null,
     asset_name varchar(100) not null,
