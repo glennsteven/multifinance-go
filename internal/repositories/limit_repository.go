@@ -150,8 +150,3 @@ func (l *limitRepository) FindOne(ctx context.Context, consumerId int64) (*entit
 		return nil, nil
 	}
 }
-
-func (l *limitRepository) Find(ctx context.Context) ([]entity.ConsumerLimits, error) {
-	//TODO implement me
-	panic("implement me")
-}

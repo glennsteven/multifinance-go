@@ -49,6 +49,15 @@ func (a *addTransactionService) AddTransaction(ctx context.Context, payload pres
 		}, err
 	}
 
+	if checkLimit == nil {
+		logrus.Errorf("data limit consumer not found: %v", err)
+		return resources.GeneralResource{
+			Code:    http.StatusBadRequest,
+			Success: false,
+			Message: "You don't have data limit",
+		}, err
+	}
+
 	limitInstallment = checkLimit.Tenor
 	limitOTR = checkLimit.LimitAmount
 
@@ -129,6 +138,7 @@ func (a *addTransactionService) AddTransaction(ctx context.Context, payload pres
 	}
 
 	response := resources.TransactionResource{
+		Id:        saveTransaction.Id,
 		Status:    consts.ConvertStatusToString(saveTransaction.Status),
 		TotalCost: int(totalCost),
 		InformationConsumer: resources.InformationConsumer{
@@ -141,6 +151,48 @@ func (a *addTransactionService) AddTransaction(ctx context.Context, payload pres
 		Code:    http.StatusCreated,
 		Success: true,
 		Message: "Please waiting approved from admin",
+		Data:    response,
+	}, nil
+}
+
+func (a *addTransactionService) ProcessedTransaction(ctx context.Context, payload presentations.TransactionUpdateStatusRequest, transactionId int64) (resources.GeneralResource, error) {
+	checkTransaction, err := a.transactionRepo.FindId(ctx, transactionId)
+	if err != nil {
+		logrus.Errorf("check data transaction: %v", err)
+		return resources.GeneralResource{
+			Code:    http.StatusInternalServerError,
+			Success: false,
+			Message: "Internal Server Error",
+		}, err
+	}
+
+	if checkTransaction == nil {
+		logrus.Errorf("check limit consumer: %v", err)
+		return resources.GeneralResource{
+			Code:    http.StatusBadRequest,
+			Success: false,
+			Message: "Transaction data not found",
+		}, err
+	}
+
+	err = a.transactionRepo.Update(ctx, entity.Transactions{Status: payload.Status}, transactionId)
+	if err != nil {
+		logrus.Errorf("update status transaction: %v", err)
+		return resources.GeneralResource{
+			Code:    http.StatusInternalServerError,
+			Success: false,
+			Message: "Internal Server Error",
+		}, err
+	}
+
+	response := resources.TransactionUpdateStatusResource{
+		Status: consts.ConvertStatusToString(payload.Status),
+	}
+
+	return resources.GeneralResource{
+		Code:    http.StatusOK,
+		Success: true,
+		Message: "The transaction has been processed",
 		Data:    response,
 	}, nil
 }
