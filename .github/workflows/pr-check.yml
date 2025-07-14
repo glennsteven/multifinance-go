@@ -2,10 +2,10 @@ name: Pull Request Check
 
 on:
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main ]
 
 env:
-  GO_VERSION: '1.20'
+  GO_VERSION: '1.23'
 
 jobs:
   test:
