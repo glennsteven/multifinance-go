@@ -37,8 +37,10 @@ jobs:
       with:
         go-version: ${{ env.GO_VERSION }}
 
-    - name: Install dependencies
-      run: go mod download
+    - name: Install dependencies and tidy modules
+      run: |
+        go mod download
+        go mod tidy
 
     - name: Run tests
       run: go test -v ./...
