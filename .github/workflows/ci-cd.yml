@@ -1,0 +1,74 @@
+name: Code Quality Check
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  GO_VERSION: '1.20'
+
+jobs:
+  test:
+    name: Test and Lint
+    runs-on: ubuntu-latest
+    
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: admin123
+          MYSQL_DATABASE: multi_finance_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd "mysqladmin ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: ${{ env.GO_VERSION }}
+
+    - name: Install dependencies
+      run: go mod download
+
+    - name: Run tests
+      run: go test -v ./...
+      env:
+        DB_HOST: localhost
+        DB_PORT: 3306
+        DB_NAME: multi_finance_test
+        DB_USER: root
+        DB_PASSWORD: admin123
+
+    - name: Run linting
+      run: |
+        go install golang.org/x/lint/golint@latest
+        golint ./...
+
+    - name: Check code formatting
+      run: |
+        go fmt ./...
+        if [ -n "$(git status --porcelain)" ]; then
+          echo "Code is not formatted. Please run 'go fmt ./...'"
+          exit 1
+        fi
+
+    - name: Run go vet
+      run: go vet ./...
+
+    - name: Check for unused imports
+      run: |
+        go install golang.org/x/tools/cmd/goimports@latest
+        goimports -l . | grep -v vendor || true
+
+    - name: Check for race conditions
+      run: go test -race ./... 
