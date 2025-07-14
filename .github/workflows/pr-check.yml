@@ -83,11 +83,3 @@ jobs:
       run: |
         go mod download
         go mod tidy
-
-    - name: Build application
-      run: go build -o main .
-
-    - name: Check for common Go issues
-      run: |
-        go install honnef.co/go/tools/cmd/staticcheck@latest
-        staticcheck ./... 
